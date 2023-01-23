@@ -40,23 +40,25 @@ class Server:
         return self.__indexed_dataset
 
     def get_hyper_index(self, index: int = None, page_size: int = 10) -> Dict:
-        if index is None:
-            index = 0
+        """
+        deletion resilient hypermedia pagination
+        """
         dataset = self.indexed_dataset()
-        assert type(index) is int and index < len(dataset)
-        next_index = index + page_size
-        if next_index > len(dataset):
-            next_index = None
+        assert type(index) is int and index in range(len(dataset))
+
         data = []
-        while index < next_index:
-            if index in dataset.keys():
-                data.append(dataset[index])
+        start, end = index, index + page_size
+
+        while start < end:
+            if start in dataset.keys():
+                data.append(dataset[start])
             else:
-                next_index += 1
-            index += 1
+                end += 1
+            start += 1
+
         return {
-            'index': index,
-            'next_index': next_index,
-            'page_size': page_size,
-            'data': data
-            }
+                "index": index,
+                "data": data,
+                "page_size": len(data),
+                "next_index": end
+                }
