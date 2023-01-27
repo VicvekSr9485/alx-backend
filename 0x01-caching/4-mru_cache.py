@@ -13,23 +13,21 @@ class MRUCache(BaseCaching):
 
     def put(self, key, item):
         """ add an item to the caching system """
-        if key and item:
-            self.cache_data[key] = item
-            if key not in self.cache_data_list:
-                self.cache_data_list.append(key)
-            else:
-                self.cache_data_list.remove(key)
-                self.cache_data_list.append(key)
-            if len(self.cache_data_list) > BaseCaching.MAX_ITEMS:
-                discard = self.cache_data_list.pop(0)
-                del self.cache_data[discard]
-                print("DISCARD:{}".format(discard))
+        if key is None or item is None:
+            return
+        if key in self.cache_data:
+            self.cache_data_list.remove(key)
+        elif len(self.cache_data) >= self.MAX_ITEMS:
+            discarded_key = self.cache_data_list.pop(0)
+            self.cache_data.pop(discarded_key)
+            print(f"DISCARD: {discarded_key}")
+        self.cache_data[key] = item
+        self.cache_data_list.append(key)
 
     def get(self, key):
         """ get an item from the cache """
-        if key:
-            if key in self.cache_data:
-                self.cache_data_list.remove(key)
-                self.cache_data_list.append(key)
-                return self.cache_data[key]
-        return None
+        if key is None or key not in self.cache_data:
+            return None
+        self.cache_data_list.remove(key)
+        self.cache_data_list.append(key)
+        return self.cache_data[key]
