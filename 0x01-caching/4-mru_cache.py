@@ -20,7 +20,7 @@ class MRUCache(BaseCaching):
         elif len(self.cache_data) >= self.MAX_ITEMS:
             discarded_key = self.cache_data_list.pop(0)
             self.cache_data.pop(discarded_key)
-            print(f"DISCARD: {discarded_key}")
+            print("DISCARD: {}".format(discarded_key))
         self.cache_data[key] = item
         self.cache_data_list.append(key)
 
