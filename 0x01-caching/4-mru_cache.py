@@ -1,33 +1,41 @@
 #!/usr/bin/env python3
-""" MRU Caching module """
-
+"""Class representation of MRU caching
+"""
 from base_caching import BaseCaching
 
 
 class MRUCache(BaseCaching):
-    """ MRU caching system """
+    """"MRUCache that inherits from BaseCaching
+    """
     def __init__(self):
-        """ init method for MRU caching """
+        """Initialize MRUCache
+        """
         super().__init__()
-        self.cache_data_list = []
+        self.stack = []
 
     def put(self, key, item):
-        """ add an item to the caching system """
-        if key is None or item is None:
-            return
-        if key in self.cache_data:
-            self.cache_data_list.remove(key)
-        elif len(self.cache_data) >= self.MAX_ITEMS:
-            discarded_key = self.cache_data_list.pop(0)
-            self.cache_data.pop(discarded_key)
-            print("DISCARD: {}".format(discarded_key))
-        self.cache_data[key] = item
-        self.cache_data_list.append(key)
+        """Assign key and item to the cache system
+        """
+        if len(self.cache_data) == self.MAX_ITEMS and key not in self.stack:
+            discard = self.stack.pop()
+            del self.cache_data[discard]
+            print("DISCARD: {}".format(discard))
+
+        if key and item:
+            if key in self.stack:
+                self.stack.remove(key)
+
+            self.stack.append(key)
+            self.cache_data[key] = item
 
     def get(self, key):
-        """ get an item from the cache """
-        if key is None or key not in self.cache_data:
+        """Fetch data from the cache system with key
+        """
+        if not key or key not in self.cache_data:
             return None
-        self.cache_data_list.remove(key)
-        self.cache_data_list.append(key)
+
+        if key in self.stack:
+            self.stack.remove(key)
+
+        self.stack.append(key)
         return self.cache_data[key]
