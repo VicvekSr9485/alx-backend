@@ -41,11 +41,22 @@ def get_locale():
     return request.accept_languages.best_match(Config.LANGUAGES)
 
 
+def get_user():
+    """returns a given user"""
+    user_id = request.args.get('login_as')
+
+    if user_id is None:
+        return None
+
+    return users.get(int(user_id))
+
+
 @app.before_request
 def before_request():
     """ sets a user object to flask.g """
     user = g.get_user()
     g.user = user
+
 
 if __name__ == "__main__":
     app.run(debug=True, host="0.0.0.0", port="5000")
