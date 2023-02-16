@@ -9,6 +9,8 @@ from flask import Flask, g, render_template, request
 from flask_babel import Babel
 from os import getenv
 
+from pytz import timezone
+
 users = {
     1: {"name": "Balou", "locale": "fr", "timezone": "Europe/Paris"},
     2: {"name": "Beyonce", "locale": "en", "timezone": "US/Central"},
@@ -34,7 +36,7 @@ app.config.from_object(Config)
 @app.route('/', methods=['GET'], strict_slashes=False)
 def index() -> str:
     """this route renders 0-index.html template"""
-    return render_template('6-index.html')
+    return render_template('7-index.html')
 
 
 @babel.localeselector
@@ -55,6 +57,25 @@ def get_locale() -> str:
             return lang
     else:
         return request.accept_languages.best_match(app.config['LANGUAGES'])
+
+
+@babel.timezoneselector
+def get_timezone():
+    """this function get timezone for the locale"""
+    default_time_zone = app.config['BABEL_DEFAULT_TIMEZONE']
+    localtZone = request.args.get('timezone', None)
+    if localtZone:
+        try:
+            return timezone(localtZone).zone
+        except pytz.exceptions.UnknownTimeZoneError:
+            return default_time_zone
+    if g.user:
+        try:
+            localtZone = g.user.get('timezone')
+            return timezone(localtZone).zone
+        except pytz.exceptions.UnknownTimeZoneError:
+            return default_time_zone
+    return request.accept_languages.best_match(default_time_zone)
 
 
 def get_user():
