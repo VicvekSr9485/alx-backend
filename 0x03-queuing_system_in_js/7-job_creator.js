@@ -48,7 +48,7 @@ const jobs = [
     }
   ];
 
-jobs.forEach((jpbData) => {
+jobs.forEach((jobData) => {
     const job = queue.create('push_notification_code_2', jobData);
 
     job.on('complete', () => {
