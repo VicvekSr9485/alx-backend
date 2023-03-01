@@ -11,7 +11,7 @@ function sendNotification(phoneNumber, message, job, done) {
         done(error);
     } else {
         job.progress(50, 100);
-        console.log(`ending notification to ${phoneNumber}, with message: ${message}`);
+        console.log(`Sending notification to ${phoneNumber}, with message: ${message}`);
         done();
     }
 }
