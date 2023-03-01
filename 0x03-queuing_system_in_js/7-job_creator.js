@@ -52,7 +52,7 @@ jobs.forEach((jobData) => {
     const job = queue.create('push_notification_code_2', jobData);
 
     job.on('complete', () => {
-        console.log(`Notification job ${jod.id} completed`);
+        console.log(`Notification job ${job.id} completed`);
     });
 
     job.on('failed', (error) => {
